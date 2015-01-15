@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block body_block %}
+    <!--The user object is available via the request object passed into a view.-->
+        {% if user.is_authenticated %}
+            <h1>Rango says... hello {{ user.username }}!</h1>
+        {% else %}
+            <h1>Rango says... hello world!</h1>
+        {% endif %}
+
+        {% if categories %}
+            <ul>
+                {% for category in categories %}
+                    <li><a href="{% url 'category'  category.slug %}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+       {% else %}
+            <strong>There are no categories present.</strong>
+       {% endif %}
+
+{% endblock %}
