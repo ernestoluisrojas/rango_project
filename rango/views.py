@@ -9,7 +9,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required #for decorator
 
 from datetime import datetime
-from rango.bing_search import run_query
+from rango.bing_search import *
+from rango.category_list import *
 from django.shortcuts import redirect
 
 
@@ -358,3 +359,34 @@ def track_url(request):
                 pass
 
     return redirect(url)
+
+
+@login_required
+def like_category(request):
+
+    cat_id = None
+    if request.method == 'GET':
+        cat_id = request.GET['category_id']
+
+    likes = 0
+    if cat_id:
+        cat = Category.objects.get(id=int(cat_id))
+        if cat:
+            likes = cat.likes + 1
+            cat.likes =  likes
+            cat.save()
+
+    return HttpResponse(likes)
+
+
+
+def suggest_category(request):
+
+        cat_list = []
+        starts_with = ''
+        if request.method == 'GET':
+                starts_with = request.GET['suggestion']
+
+        cat_list = get_category_list(8, starts_with)
+
+        return render(request, 'rango/category_list.html', {'cat_list': cat_list })
